@@ -1,0 +1,27 @@
+{{set . "title" "Show Post"}}
+{{template "header.html" .}}
+
+<p>
+  <b>Title: </b>
+  {{ .post.Title}}
+</p>
+
+<p>
+  <b>Body: </b>
+  {{ .post.Body}}
+</p>
+
+<h4>Comments: </h4>
+{{template "Comment/_comment.html" .}}
+
+<h4>Add a comment:</h4>
+{{template "Comment/_form.html" .}}
+
+{{if isAdmin .currentUser }}
+  <a href="{{url "Post.Edit" .post.Id}}">Edit</a>
+  <a href="{{url "Post.Destroy" .post.Id}}">Destroy</a>
+{{end}}
+
+<a href="{{url "Post.Index"}}">Back</a>
+
+{{template "footer.html" .}}

@@ -1,0 +1,19 @@
+<form method="POST" action="{{if .post.Id}}{{url "Post.Update" .post.Id}}{{else}}{{url "Post.Create"}}{{end}}">
+  {{$post := .post}}
+  {{with $field := field "title" .}}
+    <div>
+      <label for="title">Title</label>
+      <input type="text" id="title" name="{{$field.Name}}" placeholder="Enter title" value="{{if $field.Flash}}{{$field.Flash}}{{else}}{{$post.Title}}{{end}}"/>
+    </div>
+  {{end}}
+
+  {{with $field := field "body" .}}
+    <div>
+      <label for="title">Body</label>
+      <textarea id="body" name="{{$field.Name}}">
+        {{if $field.Flash}}{{$field.Flash}}{{else}}{{$post.Body}}{{end}}
+      </textarea>
+    </div>
+  {{end}}
+  <button type="submit">Create Post</button>
+</form>

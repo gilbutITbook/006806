@@ -1,0 +1,34 @@
+{{set . "title" "All Posts"}}
+{{template "header.html" .}}
+{{$currentUser := .currentUser}}
+<table class="table">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Title</th>
+      <th>Created at</th>
+      <th>Updated at</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{range .posts}}
+      <tr>
+        <th scope="row">{{.Id}}</th>
+        <td>{{.Title}}</td>
+        <td><time>{{formatDate .CreatedAt}}</time></td>
+        <td><time>{{formatDate .UpdatedAt}}</time></td>
+        <td><a href="{{url "Post.Show" .Id}}">Show</a></td>
+        {{if isAdmin $currentUser }}
+          <td><a href="{{url "Post.Edit" .Id}}">Edit</a></td>
+          <td><a href="{{url "Post.Destroy" .Id}}">Destroy</a></td>
+        {{end}}
+      </tr>
+    {{end}}
+  </tbody>
+</table>
+
+{{if isAdmin .currentUser }}
+  <p><a href="{{url "Post.New" }}">New Post</a></p>
+{{end}}
+
+{{template "footer.html" .}}

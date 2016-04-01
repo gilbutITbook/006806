@@ -1,0 +1,9 @@
+{{set . "title" "Login"}}
+{{template "header.html" .}}
+
+<form method="POST" action={{url "App.CreateSession"}}>
+  <h2>Please sign in</h2>
+  <input type="text" placeholder="Username" name="username">
+  <input type="password" placeholder="Password" name="password">
+  <button type="submit">Login</button>
+</form>

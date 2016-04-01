@@ -1,0 +1,8 @@
+{{set . "title" "New Post"}}
+{{template "header.html" .}}
+
+{{template "Post/_form.html" .}}
+
+<a href="{{url "Post.Index"}}">Back</a>
+
+{{template "footer.html" .}}

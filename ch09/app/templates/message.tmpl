@@ -1,0 +1,95 @@
+<div class="page-header">
+  <h4>메세지
+    <small id="room-name"></small>
+  </h4>
+</div>
+<div class="panel panel-default">
+  <div id="messages" class="panel-body">
+  </div>
+  <div class="panel-footer">
+    <div class="media">
+      <div class="media-body">
+        <form id="chatbox">
+          <input type="text" class="form-control" id="message" placeholder="메세지를 입력하세요">
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+  var socket = null;
+  
+  function enterRoom(roomId) {
+          // 채팅방에 입장하면 "GET /rooms/:id/messages"를 호출하여 메세지 조회하여 화면에 보여줌
+          $.get("/rooms/" + roomId + "/messages", function(data) {
+                  $("#messages").empty();
+                  if (data != null) {
+                          for (var i = data.length - 1; i >= 0; i--) {
+                                  addMessage(data[i]);
+                          };
+                  }
+          })
+  
+          // 연결된 소켓을 종료하고 입장한 채팅방 아이디로 새로운 소켓 생성
+          if (socket != null) {
+                  socket.close();
+          }
+          socket = new WebSocket(socketEndPoint + roomId);
+          socket.onmessage = function(e) {
+                  addMessage(JSON.parse(e.data));
+          }
+  
+  }
+  
+  // 화면에 message를 보여줌
+  function addMessage(message) {
+          var img = $("<div>").addClass("media-left").append(
+                  $("<img>").addClass("img-thumb").css({
+                          width: 30
+                  }).attr("src", message.user.avatar_url)
+          );
+          var msg = $("<div>").addClass("media-body").append(
+                  $("<h6>").text(message.user.name + " ").addClass("media-heading")
+                  .append($("<small>").text(new Date(message.created_at).toLocaleString())),
+                  $("<p>").text(message.content));
+  
+          $("#messages").append($("<div>").addClass("media").append(img, msg));
+  }
+  
+  // 소켓 연결이 완료되지 않은 경우, 소켓 연결이 완료될 때 까지 대기 후 callback 실행
+  function waitForSocketConnection(socket, callback) {
+          setTimeout(
+                  function() {
+                          if (socket.readyState === 1) {
+                                  if (callback != null) {
+                                          callback();
+                                  }
+                                  return;
+                          } else {
+                                  console.log("wait for connection...")
+                                  waitForSocketConnection(socket, callback);
+                          }
+  
+                  }, 5); // 소켓 연결이 완료될 때 까지 5 milisecond 단위로 소켓 연결 상태 확인
+  }
+  
+  $(function() {
+          var msgBox = $("#chatbox input#message");
+          // "chatbox"를 submit 하면 소켓을 통해 "chatbox"에 입력한 메세지 전송
+          $("#chatbox").submit(function() {
+                  if (!msgBox.val()) return false;
+                  if (!socket) {
+                          console.log("Error: There is no socket connection.");
+                          return false;
+                  }
+                  waitForSocketConnection(socket, function() {
+                          socket.send(JSON.stringify({
+                                  "room_id": currentRoomId,
+                                  "content": msgBox.val()
+                          }));
+                          msgBox.val("");
+                  })
+                  return false;
+          });
+  });
+</script>

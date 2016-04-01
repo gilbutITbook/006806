@@ -1,0 +1,29 @@
+<html>
+  <head>
+    <meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width">
+    <title>Simple Chat</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <script src="//code.jquery.com/jquery-2.1.3.min.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-4 col-xs-12">
+          {{ template "rooms" }}
+        </div>
+        <div class="col-sm-8 col-xs-12">
+          {{ template "message" }}
+        </div>
+      </div>
+    </div>
+    <script type="text/javascript">
+      var socketEndPoint = "ws://{{.host}}/ws/";                
+      $(function() {
+              if (!window["WebSocket"]) {
+                      console.log("Error: Your browser does not support web sockets.")
+              }
+      });
+    </script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+  </body>
+</html>

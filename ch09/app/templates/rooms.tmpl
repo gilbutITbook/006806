@@ -1,0 +1,64 @@
+<div class="page-header">
+  <h4>채팅방 목록</h4>
+</div>
+<div id="rooms" class="list-group"></div>
+<form class="input-group">
+  <input id="room-name" type="text" class="form-control" placeholder="방 이름 입력">
+  <span class="input-group-btn">
+  <button id="create-room" class="btn btn-default" type="submit">방 생성</button>
+  </span>
+</form>
+<script>
+  var currentRoomId = null;
+  
+  var createRoomBox = function(room) {
+          $("#rooms").prepend(
+                  $("<a>").attr("id", room.id)
+                  .attr("href", "#")
+                  .text(room.name)
+                  .addClass("list-group-item")
+                  .bind("click", function(e) {
+                          e.preventDefault();
+  
+                          // 채팅방 항목을 클릭하면 방에 입장
+                          var roomId = $(this).attr("id");
+                          if (currentRoomId) {
+                                  $("#rooms #" + currentRoomId).removeClass("active")
+                          }
+                          $("#rooms #" + roomId).addClass("active")
+                          enterRoom(roomId);
+                          currentRoomId = roomId;
+                  }));
+          $("#room-name").val("");
+  
+          activateRoom(room.id);
+  };
+  
+  var activateRoom = function(roomId){
+          if (currentRoomId) {
+                  $("#rooms #" + currentRoomId).removeClass("active")
+          }
+          $("#rooms #" + roomId).addClass("active")
+          enterRoom(roomId);
+          currentRoomId = roomId;
+  }
+  
+  
+  $(document).ready(function() {
+          // "create-room" 버튼을 클릭하면 "POST /rooms"를 호출하여 채팅방 정보 생성
+          // 채팅방 생성 완료 후, 생성된 채팅방 정보를 화면에 보여줌
+          $("#create-room").click(function() {
+                  $.post("/rooms", { name: $("#room-name").val() },
+                          function(room, status) {
+                                  createRoomBox(room);
+                          });
+          });
+  
+          // 웹페이지 로딩이 완료되면 "GET /rooms"를 호출하여 전체 채팅방 목록을 조회하여 화면에 보여줌
+          $.get("/rooms", function(rooms) {
+                  for (var i = 0; i < rooms.length; i++) {
+                          createRoomBox(rooms[i]);
+                  };
+          })
+  });
+</script>

@@ -1,0 +1,9 @@
+{{set . "title" "Edit Post"}}
+{{template "header.html" .}}
+
+{{template "Post/_form.html" .}}
+
+<a href="{{url "Post.Show" .post.Id}}">Show</a>
+<a href="{{url "Post.Index"}}">Back</a>
+
+{{template "footer.html" .}}

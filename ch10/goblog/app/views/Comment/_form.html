@@ -1,0 +1,15 @@
+<form method="POST" action="{{url "Comment.Create" .post.Id}}">  
+  <div>
+    {{with $field := field "commenter" .}}
+      <label for="commenter">Name</label>
+      <input type="text" id="commenter" name="{{$field.Name}}" placeholder="Commenter"/>
+    {{end}}
+  </div>
+  <div>
+    {{with $field := field "body" .}}
+      <label for="body">Body</label>
+      <input type="text" id="body" name="{{$field.Name}}" placeholder="Body"/>
+    {{end}}
+  </div>
+  <button type="submit">Add comment</button>
+</form>
